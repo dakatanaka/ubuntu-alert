@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<section>
+  <div class="wrap">
+    <h2>Become an Ubuntu Watcher</h2>
+    <p class="sub">Join the network of everyday people who help bring missing persons home.</p>
+
+    <form method="POST" style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px;max-width:520px;">
+      <div style="margin-bottom:14px;">
+        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Full name *</label>
+        <input type="text" name="name" required placeholder="Your full name" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">WhatsApp number *</label>
+        <input type="text" name="phone" required placeholder="e.g. +263 712 345 678" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Your role</label>
+        <select name="role" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
+          <option>Taxi / ride-share driver</option>
+          <option>Bus operator</option>
+          <option>Shop owner</option>
+          <option>Security guard</option>
+          <option>Teacher</option>
+          <option>Church leader</option>
+          <option>Community member</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div style="margin-bottom:20px;">
+        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Your area *</label>
+        <input type="text" name="area" required placeholder="e.g. Mbare, Harare" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
+      </div>
+      <button type="submit" class="btn btn-green" style="width:100%;padding:12px;">Join the watcher network</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

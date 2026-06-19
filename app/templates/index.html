@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section style="text-align:center;padding:64px 0 48px;">
+  <div class="wrap">
+    <p style="font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">See. Share. Save.</p>
+    <h1 style="font-size:40px;font-weight:800;margin-bottom:10px;">Africa's community alert network.</h1>
+    <p style="font-family:Georgia,serif;font-style:italic;font-size:19px;color:var(--deep-green);margin-bottom:28px;">I am because we are.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="/report" class="btn btn-primary">Report someone missing</a>
+      <a href="/watch" class="btn btn-green">Become a watcher</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Active alerts</h2>
+    <p class="sub">Live cases currently shared across the Ubuntu Alert network.</p>
+
+    {% if cases %}
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        {% for case in cases %}
+        <div style="display:flex;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;">
+          <div style="width:52px;height:52px;border-radius:10px;background:var(--sand);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">
+            {% if case.category == 'child' %}🧒
+            {% elif case.category == 'vulnerable' %}👵
+            {% elif case.category == 'critical' %}🚨
+            {% else %}🧑{% endif %}
+          </div>
+          <div style="flex:1;">
+            <span class="badge {{ case.category }}">{{ case.category|title }} alert</span>
+            <h4 style="margin:4px 0 2px;font-size:15px;">{{ case.name }}, age {{ case.age }}</h4>
+            <p style="font-size:13px;color:var(--muted);">Last seen: {{ case.last_location }}</p>
+            {% if case.clothing %}<p style="font-size:13px;color:var(--muted);">Wearing: {{ case.clothing }}</p>{% endif %}
+          </div>
+          <div style="font-size:12px;color:var(--muted);">{{ case.created_at.strftime('%d %b %Y') }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:40px;text-align:center;color:var(--muted);">
+        <p style="font-size:32px;margin-bottom:10px;">✅</p>
+        <p>No active alerts right now.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}
