@@ -1,50 +1,477 @@
-{% extends 'base.html' %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ubuntu Alert — A Heartwave Foundation Initiative</title>
+<style>
+  :root{
+    --sand:#F6F1E7;
+    --terracotta:#C1502E;
+    --deep-green:#2F4B3C;
+    --ink:#27231F;
+    --muted:#8A8276;
+    --card:#FFFFFF;
+    --line:#E6DFD2;
 
-<section style="text-align:center;padding:64px 0 48px;">
+    --child:#E8A33D;
+    --vulnerable:#3E7CB1;
+    --missing:#5E9C4C;
+    --critical:#C1502E;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--sand);
+    color:var(--ink);
+    line-height:1.6;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px;}
+
+  /* HEADER */
+  header{
+    border-bottom:1px solid var(--line);
+    background:var(--sand);
+    position:sticky;top:0;z-index:50;
+  }
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;letter-spacing:.2px;}
+  .brand .mark{
+    width:34px;height:34px;border-radius:50%;
+    background:var(--deep-green);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:15px;font-weight:700;
+  }
+  .brand small{display:block;font-size:11px;font-weight:400;color:var(--muted);}
+  nav.links{display:flex;gap:24px;font-size:14px;}
+  nav.links a{color:var(--ink);text-decoration:none;}
+  nav.links a:hover{color:var(--terracotta);}
+  .btn{
+    display:inline-block;padding:10px 18px;border-radius:8px;
+    font-size:14px;font-weight:600;text-decoration:none;
+    border:1px solid var(--ink);color:var(--ink);
+    transition:all .15s ease;cursor:pointer;background:none;
+  }
+  .btn:hover{background:var(--ink);color:#fff;}
+  .btn-primary{background:var(--terracotta);border-color:var(--terracotta);color:#fff;}
+  .btn-primary:hover{background:#a4421f;border-color:#a4421f;}
+
+  /* HERO */
+  .hero{padding:72px 0 56px;text-align:center;}
+  .hero .eyebrow{
+    font-size:13px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;
+  }
+  .hero h1{font-size:42px;margin:0 0 10px;font-weight:800;letter-spacing:-.01em;}
+  .hero .tagline{
+    font-family:Georgia,'Times New Roman',serif;font-style:italic;
+    font-size:19px;color:var(--deep-green);margin:0 0 28px;
+  }
+  .hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+
+  /* LIVE STRIP */
+  .stats{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    margin:48px 0;
+  }
+  .stat{background:var(--card);padding:22px;text-align:center;}
+  .stat .num{font-size:28px;font-weight:800;}
+  .stat .lbl{font-size:13px;color:var(--muted);margin-top:4px;}
+  .stat.found .num{color:var(--deep-green);}
+
+  /* CATEGORIES */
+  section{padding:56px 0;}
+  .section-title{font-size:26px;font-weight:800;margin:0 0 8px;}
+  .section-sub{color:var(--muted);font-size:15px;margin:0 0 32px;}
+
+  .cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  .cat-card{
+    border-radius:14px;padding:20px;border:1px solid var(--line);
+    background:var(--card);
+    border-left:5px solid var(--cat-color);
+  }
+  .cat-card .dot{
+    width:10px;height:10px;border-radius:50%;background:var(--cat-color);
+    display:inline-block;margin-bottom:12px;
+  }
+  .cat-card h3{margin:0 0 6px;font-size:16px;}
+  .cat-card p{margin:0;font-size:13px;color:var(--muted);}
+  .cat-card.child{--cat-color:var(--child);}
+  .cat-card.vulnerable{--cat-color:var(--vulnerable);}
+  .cat-card.missing{--cat-color:var(--missing);}
+  .cat-card.critical{--cat-color:var(--critical);}
+
+  /* ALERT FEED */
+  .alert-feed{display:flex;flex-direction:column;gap:14px;}
+  .alert-item{
+    display:flex;gap:16px;align-items:center;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;
+  }
+  .alert-item .thumb{
+    width:56px;height:56px;border-radius:10px;background:var(--sand);
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;flex-shrink:0;border:1px solid var(--line);
+  }
+  .alert-item .meta{flex:1;}
+  .badge{
+    display:inline-block;font-size:11px;font-weight:700;
+    padding:3px 9px;border-radius:6px;text-transform:uppercase;
+    letter-spacing:.04em;color:#fff;margin-bottom:6px;
+  }
+  .badge.child{background:var(--child);}
+  .badge.vulnerable{background:var(--vulnerable);}
+  .badge.missing{background:var(--missing);}
+  .badge.critical{background:var(--critical);}
+  .alert-item .meta h4{margin:0 0 2px;font-size:15px;}
+  .alert-item .meta p{margin:0;font-size:13px;color:var(--muted);}
+  .alert-item .time{font-size:12px;color:var(--muted);white-space:nowrap;}
+
+  /* HOW IT WORKS */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  .step{text-align:center;padding:20px 14px;}
+  .step .num{
+    width:38px;height:38px;border-radius:50%;background:var(--deep-green);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:700;
+    margin:0 auto 14px;font-size:15px;
+  }
+  .step h4{margin:0 0 6px;font-size:15px;}
+  .step p{margin:0;font-size:13px;color:var(--muted);}
+
+  /* WATCHER NETWORK */
+  .watcher-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .watcher-card{
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:18px;text-align:center;font-size:14px;font-weight:600;
+  }
+  .watcher-card .icon{font-size:26px;display:block;margin-bottom:8px;}
+
+  /* REPORT FORM */
+  .form-card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:28px;max-width:640px;margin:0 auto;
+  }
+  .cat-select{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+  .cat-select label{
+    flex:1;text-align:center;font-size:13px;font-weight:600;
+    padding:10px 6px;border-radius:8px;border:1px solid var(--line);
+    cursor:pointer;color:var(--muted);min-width:100px;
+    transition:all .15s ease;
+  }
+  .cat-select input{display:none;}
+  .cat-select input:checked + label{
+    border-color:var(--ink);color:var(--ink);background:var(--sand);
+  }
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;}
+  .field input, .field textarea{
+    width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;
+    font-size:14px;font-family:inherit;background:#fff;
+  }
+  .field input:focus, .field textarea:focus{outline:2px solid var(--deep-green);outline-offset:1px;}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .upload{
+    border:1.5px dashed var(--line);border-radius:10px;padding:24px;
+    text-align:center;color:var(--muted);font-size:13px;margin-bottom:18px;
+  }
+  .note{font-size:12px;color:var(--muted);text-align:center;margin-top:10px;}
+
+  /* WHATSAPP PREVIEW */
+  .wa-mock{
+    background:#0b1410;border-radius:16px;padding:24px;max-width:380px;margin:0 auto;
+  }
+  .wa-bubble{
+    border-radius:4px 14px 14px 14px;padding:14px 16px;font-size:13px;line-height:1.6;
+    margin-bottom:10px;color:#fff;
+  }
+  .wa-bubble.critical{background:var(--critical);}
+  .wa-bubble.resolved{background:var(--missing);}
+  .wa-bubble p{margin:0 0 4px;}
+  .wa-bubble .ts{font-size:11px;opacity:.75;margin-top:6px;}
+  .wa-meta{font-size:12px;color:#9bb;text-align:right;margin-bottom:14px;}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--line);padding:40px 0;text-align:center;}
+  footer .tag{
+    font-family:Georgia,'Times New Roman',serif;font-style:italic;
+    font-size:16px;color:var(--deep-green);margin-bottom:8px;
+  }
+  footer .small{font-size:12px;color:var(--muted);}
+
+  @media (max-width:800px){
+    .cat-grid, .steps, .watcher-grid{grid-template-columns:repeat(2,1fr);}
+    .stats{grid-template-columns:1fr;}
+    .row{grid-template-columns:1fr;}
+    .hero h1{font-size:30px;}
+    nav.links{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="brand">
+      <div class="mark">UA</div>
+      <div>
+        Ubuntu Alert
+        <small>A Heartwave Foundation Initiative</small>
+      </div>
+    </div>
+    <nav class="links">
+      <a href="#alerts">Active alerts</a>
+      <a href="#how">How it works</a>
+      <a href="#watchers">Watchers</a>
+      <a href="#report">Report</a>
+    </nav>
+    <a href="#report" class="btn btn-primary">Report missing person</a>
+  </div>
+</header>
+
+<section class="hero">
   <div class="wrap">
-    <p style="font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">See. Share. Save.</p>
-    <h1 style="font-size:40px;font-weight:800;margin-bottom:10px;">Africa's community alert network.</h1>
-    <p style="font-family:Georgia,serif;font-style:italic;font-size:19px;color:var(--deep-green);margin-bottom:28px;">I am because we are.</p>
-    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <a href="/report" class="btn btn-primary">Report someone missing</a>
-      <a href="/watch" class="btn btn-green">Become a watcher</a>
+    <div class="eyebrow">See. Share. Save.</div>
+    <h1>An emergency community alert network for missing &amp; vulnerable persons.</h1>
+    <p class="tagline">"I am because we are."</p>
+    <div class="hero-actions">
+      <a href="#report" class="btn btn-primary">Report someone missing</a>
+      <a href="#watchers" class="btn">Become an Ubuntu Watcher</a>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="num">312</div><div class="lbl">Active watchers</div></div>
+      <div class="stat"><div class="num">14</div><div class="lbl">Open alerts</div></div>
+      <div class="stat found"><div class="num">9</div><div class="lbl">Found safe this month</div></div>
     </div>
   </div>
 </section>
 
-<section>
+<section id="categories">
   <div class="wrap">
-    <h2>Active alerts</h2>
-    <p class="sub">Live cases currently shared across the Ubuntu Alert network.</p>
-
-    {% if cases %}
-      <div style="display:flex;flex-direction:column;gap:14px;">
-        {% for case in cases %}
-        <div style="display:flex;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;">
-          <div style="width:52px;height:52px;border-radius:10px;background:var(--sand);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">
-            {% if case.category == 'child' %}🧒
-            {% elif case.category == 'vulnerable' %}👵
-            {% elif case.category == 'critical' %}🚨
-            {% else %}🧑{% endif %}
-          </div>
-          <div style="flex:1;">
-            <span class="badge {{ case.category }}">{{ case.category|title }} alert</span>
-            <h4 style="margin:4px 0 2px;font-size:15px;">{{ case.name }}, age {{ case.age }}</h4>
-            <p style="font-size:13px;color:var(--muted);">Last seen: {{ case.last_location }}</p>
-            {% if case.clothing %}<p style="font-size:13px;color:var(--muted);">Wearing: {{ case.clothing }}</p>{% endif %}
-          </div>
-          <div style="font-size:12px;color:var(--muted);">{{ case.created_at.strftime('%d %b %Y') }}</div>
-        </div>
-        {% endfor %}
+    <h2 class="section-title">Alert categories</h2>
+    <p class="section-sub">Every report is classified so the right people respond with the right urgency.</p>
+    <div class="cat-grid">
+      <div class="cat-card child">
+        <span class="dot"></span>
+        <h3>Ubuntu Child Alert</h3>
+        <p>Missing or abducted children.</p>
       </div>
-    {% else %}
-      <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:40px;text-align:center;color:var(--muted);">
-        <p style="font-size:32px;margin-bottom:10px;">✅</p>
-        <p>No active alerts right now.</p>
+      <div class="cat-card vulnerable">
+        <span class="dot"></span>
+        <h3>Ubuntu Vulnerable Alert</h3>
+        <p>Disability, dementia, autism, or medical conditions.</p>
       </div>
-    {% endif %}
+      <div class="cat-card missing">
+        <span class="dot"></span>
+        <h3>Ubuntu Missing Alert</h3>
+        <p>Missing adults where public help could locate them.</p>
+      </div>
+      <div class="cat-card critical">
+        <span class="dot"></span>
+        <h3>Ubuntu Critical Alert</h3>
+        <p>Suspected abduction, trafficking, or imminent danger.</p>
+      </div>
+    </div>
   </div>
 </section>
 
-{% endblock %}
+<section id="alerts">
+  <div class="wrap">
+    <h2 class="section-title">Active alerts</h2>
+    <p class="section-sub">Live cases currently being shared across the Ubuntu Alert network.</p>
+    <div class="alert-feed">
+
+      <div class="alert-item">
+        <div class="thumb">🧒</div>
+        <div class="meta">
+          <span class="badge critical">Critical</span>
+          <h4>Tendai M., age 7</h4>
+          <p>Last seen near Mbare market, Harare — blue school uniform</p>
+        </div>
+        <div class="time">2h ago</div>
+      </div>
+
+      <div class="alert-item">
+        <div class="thumb">👵</div>
+        <div class="meta">
+          <span class="badge vulnerable">Vulnerable</span>
+          <h4>Grace N., age 74</h4>
+          <p>Living with dementia, last seen in Avondale, Harare</p>
+        </div>
+        <div class="time">5h ago</div>
+      </div>
+
+      <div class="alert-item">
+        <div class="thumb">🧑</div>
+        <div class="meta">
+          <span class="badge missing">Missing adult</span>
+          <h4>Brian K., age 29</h4>
+          <p>Has not returned home since Tuesday, Bulawayo CBD</p>
+        </div>
+        <div class="time">1 day ago</div>
+      </div>
+
+      <div class="alert-item">
+        <div class="thumb">🧒</div>
+        <div class="meta">
+          <span class="badge child">Child alert</span>
+          <h4>Rufaro C., age 5</h4>
+          <p>Wandered off from Mutare market, last seen near bus rank</p>
+        </div>
+        <div class="time">1 day ago</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2 class="section-title">How Ubuntu Alert works</h2>
+    <p class="section-sub">From report to resolution, every case follows the same trusted process.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <h4>Report</h4>
+        <p>A family member, school, or police station submits details and a photo.</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h4>Verify</h4>
+        <p>A trained team confirms identity, status, and contact details.</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h4>Activate</h4>
+        <p>The alert is sent to watchers, partners, and social channels.</p>
+      </div>
+      <div class="step">
+        <div class="num">4</div>
+        <h4>Resolve</h4>
+        <p>Sightings are coordinated until the person is found and the case closes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="watchers">
+  <div class="wrap">
+    <h2 class="section-title">The Ubuntu Watcher network</h2>
+    <p class="section-sub">Everyday people who see thousands of faces a day, ready to act when it matters.</p>
+    <div class="watcher-grid">
+      <div class="watcher-card"><span class="icon">🚖</span>Taxi &amp; ride-share drivers</div>
+      <div class="watcher-card"><span class="icon">🏪</span>Shop owners</div>
+      <div class="watcher-card"><span class="icon">🏫</span>Teachers</div>
+      <div class="watcher-card"><span class="icon">🛡️</span>Security guards</div>
+      <div class="watcher-card"><span class="icon">🚌</span>Bus operators</div>
+      <div class="watcher-card"><span class="icon">⛪</span>Church leaders</div>
+    </div>
+  </div>
+</section>
+
+<section id="report">
+  <div class="wrap">
+    <h2 class="section-title">Report a missing person</h2>
+    <p class="section-sub">All reports are reviewed by a trained Ubuntu Alert verifier before any alert is sent.</p>
+
+    <form class="form-card" onsubmit="event.preventDefault(); alert('This is a prototype — submissions are not yet connected to a server.');">
+      <div class="cat-select">
+        <input type="radio" name="category" id="cat-child" checked>
+        <label for="cat-child">Child alert</label>
+        <input type="radio" name="category" id="cat-vulnerable">
+        <label for="cat-vulnerable">Vulnerable</label>
+        <input type="radio" name="category" id="cat-adult">
+        <label for="cat-adult">Missing adult</label>
+        <input type="radio" name="category" id="cat-critical">
+        <label for="cat-critical">Critical</label>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Full name</label>
+          <input type="text" placeholder="e.g. Tendai Moyo" required>
+        </div>
+        <div class="field">
+          <label>Age</label>
+          <input type="text" placeholder="e.g. 7" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Last known location</label>
+        <input type="text" placeholder="e.g. Mbare market, Harare" required>
+      </div>
+
+      <div class="field">
+        <label>Clothing description</label>
+        <input type="text" placeholder="e.g. Blue school uniform, white sneakers">
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Medical conditions (optional)</label>
+          <input type="text" placeholder="e.g. Epilepsy, non-verbal">
+        </div>
+        <div class="field">
+          <label>Police case number (if available)</label>
+          <input type="text" placeholder="e.g. HRE/2026/00342">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Vehicle information (if applicable)</label>
+        <input type="text" placeholder="e.g. White Honda Fit, reg AEX 4521">
+      </div>
+
+      <div class="upload">
+        📷 Upload a recent photo<br>
+        <span style="font-size:12px;">(prototype — file upload not yet active)</span>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%;">Submit for verification</button>
+      <p class="note">By submitting, you confirm this information may be shared publicly to help locate this person.</p>
+    </form>
+  </div>
+</section>
+
+<section id="whatsapp">
+  <div class="wrap">
+    <h2 class="section-title">How alerts look on WhatsApp</h2>
+    <p class="section-sub">Once verified, alerts are broadcast in a consistent, scannable format.</p>
+
+    <div class="wa-mock">
+      <div class="wa-bubble critical">
+        <p><strong>⚠ UBUNTU CRITICAL ALERT</strong></p>
+        <p>Suspected abduction</p>
+        <p>Name: Tendai Moyo (7)</p>
+        <p>Last seen: Mbare market, Harare — 14:20</p>
+        <p>Wearing: blue school uniform, white sneakers</p>
+        <p>Vehicle: white Honda Fit, reg AEX 4521</p>
+        <p>Police case: HRE/2026/00342</p>
+        <p><strong>Seen this child or vehicle? Reply with location.</strong></p>
+        <div class="ts">14:32</div>
+      </div>
+      <div class="wa-meta">Delivered to 2,140 watchers near you</div>
+
+      <div class="wa-bubble resolved">
+        <p><strong>✅ UBUNTU ALERT UPDATE</strong></p>
+        <p>Tendai Moyo (7) has been found safe.</p>
+        <p>Thank you to everyone who shared and watched.</p>
+        <p><strong>This alert is now closed.</strong></p>
+        <div class="ts">16:05</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="tag">"I am because we are."</div>
+    <div class="small">Ubuntu Alert — A Heartwave Foundation Initiative. Prototype design, not yet connected to live data or messaging services.</div>
+  </div>
+</footer>
+
+</body>
+</html>

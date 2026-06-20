@@ -1,72 +1,206 @@
 {% extends 'base.html' %}
+{% block title %}Report a missing person — Ubuntu Alert{% endblock %}
+
+{% block head %}
+<style>
+.form-page { padding: 64px 0; }
+.form-layout { display: grid; grid-template-columns: 1fr 360px; gap: 48px; align-items: start; }
+.form-header { margin-bottom: 36px; }
+.form-eyebrow { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--rust); font-weight: 600; margin-bottom: 10px; }
+.form-title { font-size: 36px; font-weight: 800; letter-spacing: -.01em; margin-bottom: 10px; }
+.form-sub { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+.cat-tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+.cat-tab { flex: 1; min-width: 110px; }
+.cat-tab input { display: none; }
+.cat-tab label {
+  display: block; text-align: center;
+  padding: 10px 8px; border-radius: 8px;
+  border: 1px solid var(--line); color: var(--muted);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: all .15s; background: var(--card);
+}
+.cat-tab input:checked + label { border-color: var(--rust); color: var(--off-white); background: rgba(201,79,44,0.12); }
+
+.field-group { margin-bottom: 18px; }
+.field-group label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 7px; letter-spacing: .04em; text-transform: uppercase; }
+.field-group input,
+.field-group select,
+.field-group textarea {
+  width: 100%; padding: 12px 14px;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 8px; color: var(--off-white);
+  font-size: 14px; font-family: 'Inter', sans-serif;
+  transition: border-color .15s;
+}
+.field-group input:focus,
+.field-group select:focus,
+.field-group textarea:focus {
+  outline: none; border-color: var(--rust);
+}
+.field-group input::placeholder,
+.field-group textarea::placeholder { color: var(--muted); }
+.field-group select option { background: #1a1a1a; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.upload-zone {
+  border: 1px dashed rgba(242,239,232,0.2);
+  border-radius: 8px; padding: 28px;
+  text-align: center; color: var(--muted);
+  font-size: 13px; cursor: pointer;
+  transition: border-color .15s; margin-bottom: 24px;
+}
+.upload-zone:hover { border-color: var(--rust); }
+.upload-zone .icon { font-size: 28px; margin-bottom: 8px; }
+
+.submit-btn {
+  width: 100%; padding: 14px; font-size: 15px;
+  font-weight: 700; border-radius: 8px; border: none;
+  background: var(--rust); color: #fff; cursor: pointer;
+  transition: background .15s; font-family: 'Syne', sans-serif;
+}
+.submit-btn:hover { background: #b44426; }
+.form-note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 10px; line-height: 1.5; }
+
+/* SIDEBAR */
+.sidebar-card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 12px; padding: 24px; margin-bottom: 16px;
+}
+.sidebar-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 14px; }
+.sidebar-step { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+.sidebar-step:last-child { margin-bottom: 0; }
+.step-dot {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(201,79,44,0.15); border: 1px solid var(--rust);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: var(--rust); flex-shrink: 0;
+}
+.step-text { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.hotline {
+  background: rgba(201,79,44,0.08); border: 1px solid rgba(201,79,44,0.2);
+  border-radius: 8px; padding: 16px; text-align: center;
+}
+.hotline .num { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--rust); }
+.hotline .lbl { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+@media (max-width: 860px) {
+  .form-layout { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<section>
-  <div class="wrap">
-    <h2>Report a missing person</h2>
-    <p class="sub">All reports are reviewed by a trained Ubuntu Alert verifier before any alert is sent.</p>
+<div class="form-page">
+  <div class="page">
+    <div class="form-layout">
 
-    <form method="POST" style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px;max-width:640px;">
-      <p style="font-size:13px;font-weight:600;margin-bottom:10px;">Alert category</p>
-      <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
-        {% for cat in [('child','🟠 Child'),('vulnerable','🔵 Vulnerable'),('missing','🟢 Missing adult'),('critical','🔴 Critical')] %}
-        <label style="flex:1;text-align:center;font-size:13px;font-weight:600;padding:10px 6px;border-radius:8px;border:1px solid var(--line);cursor:pointer;min-width:110px;">
-          <input type="radio" name="category" value="{{ cat[0] }}" style="display:none;" {% if loop.first %}checked{% endif %}>
-          {{ cat[1] }}
-        </label>
-        {% endfor %}
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
-        <div>
-          <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Full name *</label>
-          <input type="text" name="name" required placeholder="e.g. Tendai Moyo" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
+      <!-- FORM -->
+      <div>
+        <div class="form-header">
+          <p class="form-eyebrow">Report</p>
+          <h1 class="form-title">Report a missing person.</h1>
+          <p class="form-sub">All reports are reviewed by a trained Ubuntu Alert verifier before any alert is sent to the public.</p>
         </div>
-        <div>
-          <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Age *</label>
-          <input type="text" name="age" required placeholder="e.g. 7" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
+
+        <form method="POST">
+          <p style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;">Alert category</p>
+          <div class="cat-tabs">
+            <div class="cat-tab"><input type="radio" name="category" id="cat-child" value="child" checked><label for="cat-child">🟠 Child</label></div>
+            <div class="cat-tab"><input type="radio" name="category" id="cat-vulnerable" value="vulnerable"><label for="cat-vulnerable">🔵 Vulnerable</label></div>
+            <div class="cat-tab"><input type="radio" name="category" id="cat-missing" value="missing"><label for="cat-missing">🟢 Missing adult</label></div>
+            <div class="cat-tab"><input type="radio" name="category" id="cat-critical" value="critical"><label for="cat-critical">🔴 Critical</label></div>
+          </div>
+
+          <div class="two-col">
+            <div class="field-group">
+              <label>Full name *</label>
+              <input type="text" name="name" required placeholder="e.g. Tendai Moyo">
+            </div>
+            <div class="field-group">
+              <label>Age *</label>
+              <input type="text" name="age" required placeholder="e.g. 7">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Last known location *</label>
+            <input type="text" name="last_location" required placeholder="e.g. Mbare market, Harare">
+          </div>
+
+          <div class="field-group">
+            <label>Clothing description</label>
+            <input type="text" name="clothing" placeholder="e.g. Blue school uniform, white sneakers">
+          </div>
+
+          <div class="two-col">
+            <div class="field-group">
+              <label>Medical conditions</label>
+              <input type="text" name="medical" placeholder="Optional">
+            </div>
+            <div class="field-group">
+              <label>Police case number</label>
+              <input type="text" name="police_case" placeholder="If available">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Vehicle information</label>
+            <input type="text" name="vehicle" placeholder="e.g. White Honda Fit, reg AEX 4521">
+          </div>
+
+          <div class="upload-zone">
+            <div class="icon">📷</div>
+            Upload a recent photo<br>
+            <span style="font-size:11px;">(photo upload coming soon)</span>
+          </div>
+
+          <div class="two-col" style="margin-bottom:18px;">
+            <div class="field-group" style="margin-bottom:0;">
+              <label>Your name *</label>
+              <input type="text" name="reporter_name" required placeholder="Your full name">
+            </div>
+            <div class="field-group" style="margin-bottom:0;">
+              <label>Your phone number *</label>
+              <input type="text" name="reporter_phone" required placeholder="+263 712 345 678">
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn">Submit for verification</button>
+          <p class="form-note">By submitting, you confirm this information may be shared publicly to help locate this person.</p>
+        </form>
+      </div>
+
+      <!-- SIDEBAR -->
+      <div>
+        <div class="sidebar-card">
+          <h4>What happens next</h4>
+          <div class="sidebar-step">
+            <div class="step-dot">1</div>
+            <div class="step-text">Your report is received by the Ubuntu Alert team.</div>
+          </div>
+          <div class="sidebar-step">
+            <div class="step-dot">2</div>
+            <div class="step-text">A trained verifier contacts you to confirm details.</div>
+          </div>
+          <div class="sidebar-step">
+            <div class="step-dot">3</div>
+            <div class="step-text">Once verified, the alert is broadcast to all watchers and partners.</div>
+          </div>
+          <div class="sidebar-step">
+            <div class="step-dot">4</div>
+            <div class="step-text">You receive updates as sightings come in.</div>
+          </div>
+        </div>
+
+        <div class="hotline">
+          <div class="num">0800-UBUNTU</div>
+          <div class="lbl">Emergency hotline — 24/7</div>
         </div>
       </div>
 
-      <div style="margin-bottom:14px;">
-        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Last known location *</label>
-        <input type="text" name="last_location" required placeholder="e.g. Mbare market, Harare" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
-      </div>
-
-      <div style="margin-bottom:14px;">
-        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Clothing description</label>
-        <input type="text" name="clothing" placeholder="e.g. Blue school uniform, white sneakers" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
-        <div>
-          <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Medical conditions</label>
-          <input type="text" name="medical" placeholder="Optional" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
-        </div>
-        <div>
-          <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Police case number</label>
-          <input type="text" name="police_case" placeholder="If available" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
-        </div>
-      </div>
-
-      <div style="margin-bottom:14px;">
-        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Vehicle information</label>
-        <input type="text" name="vehicle" placeholder="e.g. White Honda Fit, reg AEX 4521" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
-        <div>
-          <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Your name *</label>
-          <input type="text" name="reporter_name" required placeholder="Your full name" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
-        </div>
-        <div>
-          <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Your phone number *</label>
-          <input type="text" name="reporter_phone" required placeholder="e.g. 0712 345 678" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
-        </div>
-      </div>
-
-      <button type="submit" class="btn btn-primary" style="width:100%;padding:12px;">Submit for verification</button>
-      <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:10px;">A trained Ubuntu Alert reviewer will verify this report before any alert is activated.</p>
-    </form>
+    </div>
   </div>
-</section>
+</div>
 {% endblock %}

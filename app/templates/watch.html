@@ -1,38 +1,117 @@
 {% extends 'base.html' %}
-{% block content %}
-<section>
-  <div class="wrap">
-    <h2>Become an Ubuntu Watcher</h2>
-    <p class="sub">Join the network of everyday people who help bring missing persons home.</p>
+{% block title %}Become an Ubuntu Watcher{% endblock %}
 
-    <form method="POST" style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px;max-width:520px;">
-      <div style="margin-bottom:14px;">
-        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Full name *</label>
-        <input type="text" name="name" required placeholder="Your full name" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
+{% block head %}
+<style>
+.watch-page { padding: 64px 0; }
+.watch-layout { display: grid; grid-template-columns: 1fr 420px; gap: 48px; align-items: start; }
+.watch-left h1 { font-size: 42px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; margin-bottom: 14px; }
+.watch-left h1 em { color: var(--rust); font-style: normal; }
+.watch-left p { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 32px; max-width: 420px; }
+.impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.impact-card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; }
+.impact-card .num { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--rust); }
+.impact-card .lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+.watch-form { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 32px; }
+.watch-form h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+.watch-form .sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+.field-group { margin-bottom: 18px; }
+.field-group label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 7px; letter-spacing: .04em; text-transform: uppercase; }
+.field-group input,
+.field-group select {
+  width: 100%; padding: 12px 14px;
+  background: var(--night); border: 1px solid var(--line);
+  border-radius: 8px; color: var(--off-white);
+  font-size: 14px; font-family: 'Inter', sans-serif;
+  transition: border-color .15s;
+}
+.field-group input:focus,
+.field-group select:focus { outline: none; border-color: var(--forest); }
+.field-group input::placeholder { color: var(--muted); }
+.field-group select option { background: #1a1a1a; }
+.submit-btn {
+  width: 100%; padding: 14px; font-size: 15px;
+  font-weight: 700; border-radius: 8px; border: none;
+  background: var(--forest); color: var(--off-white); cursor: pointer;
+  transition: background .15s; font-family: 'Syne', sans-serif;
+}
+.submit-btn:hover { background: #1e3626; }
+
+@media (max-width: 860px) {
+  .watch-layout { grid-template-columns: 1fr; }
+  .impact-grid { grid-template-columns: repeat(2,1fr); }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="watch-page">
+  <div class="page">
+    <div class="watch-layout">
+
+      <div class="watch-left">
+        <p style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--rust);font-weight:600;margin-bottom:14px;">Ubuntu Watchers</p>
+        <h1>You see thousands<br>of faces. <em>We need<br>your eyes.</em></h1>
+        <p>Ubuntu Watchers are everyday people — taxi drivers, shop owners, teachers, security guards — who receive nearby alerts and help bring missing persons home.</p>
+
+        <div class="impact-grid">
+          <div class="impact-card">
+            <div class="num">312</div>
+            <div class="lbl">Active watchers</div>
+          </div>
+          <div class="impact-card">
+            <div class="num">9</div>
+            <div class="lbl">Found safe this month</div>
+          </div>
+          <div class="impact-card">
+            <div class="num">2min</div>
+            <div class="lbl">Avg. alert delivery time</div>
+          </div>
+          <div class="impact-card">
+            <div class="num">5km</div>
+            <div class="lbl">Default alert radius</div>
+          </div>
+        </div>
       </div>
-      <div style="margin-bottom:14px;">
-        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">WhatsApp number *</label>
-        <input type="text" name="phone" required placeholder="e.g. +263 712 345 678" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
+
+      <div>
+        <div class="watch-form">
+          <h2>Join the network</h2>
+          <p class="sub">Free to join. Alerts sent to your WhatsApp when someone goes missing near you.</p>
+
+          <form method="POST">
+            <div class="field-group">
+              <label>Full name *</label>
+              <input type="text" name="name" required placeholder="Your full name">
+            </div>
+            <div class="field-group">
+              <label>WhatsApp number *</label>
+              <input type="text" name="phone" required placeholder="+263 712 345 678">
+            </div>
+            <div class="field-group">
+              <label>Your role</label>
+              <select name="role">
+                <option>Taxi / ride-share driver</option>
+                <option>Bus operator</option>
+                <option>Shop owner</option>
+                <option>Security guard</option>
+                <option>Teacher</option>
+                <option>Church leader</option>
+                <option>Community member</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field-group" style="margin-bottom:24px;">
+              <label>Your area *</label>
+              <input type="text" name="area" required placeholder="e.g. Mbare, Harare">
+            </div>
+            <button type="submit" class="submit-btn">Join the watcher network</button>
+          </form>
+        </div>
       </div>
-      <div style="margin-bottom:14px;">
-        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Your role</label>
-        <select name="role" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
-          <option>Taxi / ride-share driver</option>
-          <option>Bus operator</option>
-          <option>Shop owner</option>
-          <option>Security guard</option>
-          <option>Teacher</option>
-          <option>Church leader</option>
-          <option>Community member</option>
-          <option>Other</option>
-        </select>
-      </div>
-      <div style="margin-bottom:20px;">
-        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Your area *</label>
-        <input type="text" name="area" required placeholder="e.g. Mbare, Harare" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;">
-      </div>
-      <button type="submit" class="btn btn-green" style="width:100%;padding:12px;">Join the watcher network</button>
-    </form>
+
+    </div>
   </div>
-</section>
+</div>
 {% endblock %}
