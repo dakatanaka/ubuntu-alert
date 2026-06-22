@@ -1,116 +1,108 @@
 {% extends 'base.html' %}
 {% block title %}Become an Ubuntu Watcher{% endblock %}
-
 {% block head %}
 <style>
-.watch-page { padding: 64px 0; }
-.watch-layout { display: grid; grid-template-columns: 1fr 420px; gap: 48px; align-items: start; }
-.watch-left h1 { font-size: 42px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; margin-bottom: 14px; }
-.watch-left h1 em { color: var(--rust); font-style: normal; }
-.watch-left p { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 32px; max-width: 420px; }
-.impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.impact-card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; }
-.impact-card .num { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--rust); }
-.impact-card .lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-.watch-form { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 32px; }
-.watch-form h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
-.watch-form .sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
-.field-group { margin-bottom: 18px; }
-.field-group label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 7px; letter-spacing: .04em; text-transform: uppercase; }
-.field-group input,
-.field-group select {
-  width: 100%; padding: 12px 14px;
-  background: var(--night); border: 1px solid var(--line);
-  border-radius: 8px; color: var(--off-white);
-  font-size: 14px; font-family: 'Inter', sans-serif;
-  transition: border-color .15s;
+.page-header { background: var(--zim-green); color: #fff; padding: 40px 0; }
+.page-header h1 { font-size: 34px; font-weight: 900; color: #fff; margin-bottom: 6px; }
+.page-header p { color: rgba(255,255,255,0.75); font-size: 15px; }
+.breadcrumb { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 8px; }
+.breadcrumb a { color: var(--zim-yellow); text-decoration: none; }
+.watch-body { padding: 48px 0; }
+.watch-layout { display: grid; grid-template-columns: 1fr 380px; gap: 48px; align-items: start; }
+.why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+.why-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 20px; }
+.why-card .num { font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 900; color: var(--zim-green); }
+.why-card .lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.roles-list { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.role-row { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--white); font-size: 14px; }
+.role-row:last-child { border-bottom: none; }
+.role-row .icon { font-size: 20px; width: 32px; text-align: center; }
+.form-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.form-card .fc-head { background: var(--zim-black); color: #fff; padding: 14px 20px; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.form-card .fc-body { padding: 24px; }
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .06em; font-family: 'Montserrat', sans-serif; }
+.field input, .field select {
+  width: 100%; padding: 11px 13px;
+  border: 1px solid var(--border); border-radius: 4px;
+  color: var(--text); font-size: 14px; font-family: 'Open Sans', sans-serif;
+  background: var(--white); transition: border-color .15s;
 }
-.field-group input:focus,
-.field-group select:focus { outline: none; border-color: var(--forest); }
-.field-group input::placeholder { color: var(--muted); }
-.field-group select option { background: #1a1a1a; }
+.field input:focus, .field select:focus { outline: none; border-color: var(--zim-green); }
+.field select option { background: #fff; }
 .submit-btn {
-  width: 100%; padding: 14px; font-size: 15px;
-  font-weight: 700; border-radius: 8px; border: none;
-  background: var(--forest); color: var(--off-white); cursor: pointer;
-  transition: background .15s; font-family: 'Syne', sans-serif;
+  width: 100%; padding: 14px; font-size: 14px; font-weight: 800;
+  border-radius: 4px; border: none; background: var(--zim-green);
+  color: #fff; cursor: pointer; transition: background .15s;
+  font-family: 'Montserrat', sans-serif; text-transform: uppercase; letter-spacing: .06em;
 }
-.submit-btn:hover { background: #1e3626; }
-
+.submit-btn:hover { background: #004d00; }
 @media (max-width: 860px) {
   .watch-layout { grid-template-columns: 1fr; }
-  .impact-grid { grid-template-columns: repeat(2,1fr); }
+  .why-grid { grid-template-columns: repeat(2,1fr); }
 }
 </style>
 {% endblock %}
-
 {% block content %}
-<div class="watch-page">
+<div class="page-header">
+  <div class="page">
+    <p class="breadcrumb"><a href="/">Home</a> / Watchers</p>
+    <h1>Become an Ubuntu Watcher</h1>
+    <p>Join the network of everyday people helping bring missing persons home.</p>
+  </div>
+</div>
+<div class="stripe-divider"></div>
+<div class="watch-body">
   <div class="page">
     <div class="watch-layout">
-
-      <div class="watch-left">
-        <p style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--rust);font-weight:600;margin-bottom:14px;">Ubuntu Watchers</p>
-        <h1>You see thousands<br>of faces. <em>We need<br>your eyes.</em></h1>
-        <p>Ubuntu Watchers are everyday people — taxi drivers, shop owners, teachers, security guards — who receive nearby alerts and help bring missing persons home.</p>
-
-        <div class="impact-grid">
-          <div class="impact-card">
-            <div class="num">312</div>
-            <div class="lbl">Active watchers</div>
-          </div>
-          <div class="impact-card">
-            <div class="num">9</div>
-            <div class="lbl">Found safe this month</div>
-          </div>
-          <div class="impact-card">
-            <div class="num">2min</div>
-            <div class="lbl">Avg. alert delivery time</div>
-          </div>
-          <div class="impact-card">
-            <div class="num">5km</div>
-            <div class="lbl">Default alert radius</div>
-          </div>
-        </div>
-      </div>
-
       <div>
-        <div class="watch-form">
-          <h2>Join the network</h2>
-          <p class="sub">Free to join. Alerts sent to your WhatsApp when someone goes missing near you.</p>
-
-          <form method="POST">
-            <div class="field-group">
-              <label>Full name *</label>
-              <input type="text" name="name" required placeholder="Your full name">
-            </div>
-            <div class="field-group">
-              <label>WhatsApp number *</label>
-              <input type="text" name="phone" required placeholder="+263 712 345 678">
-            </div>
-            <div class="field-group">
-              <label>Your role</label>
-              <select name="role">
-                <option>Taxi / ride-share driver</option>
-                <option>Bus operator</option>
-                <option>Shop owner</option>
-                <option>Security guard</option>
-                <option>Teacher</option>
-                <option>Church leader</option>
-                <option>Community member</option>
-                <option>Other</option>
-              </select>
-            </div>
-            <div class="field-group" style="margin-bottom:24px;">
-              <label>Your area *</label>
-              <input type="text" name="area" required placeholder="e.g. Mbare, Harare">
-            </div>
-            <button type="submit" class="submit-btn">Join the watcher network</button>
-          </form>
+        <p class="section-eyebrow">Why join</p>
+        <h2 class="section-title">You see thousands of faces.<br><span>We need your eyes.</span></h2>
+        <p style="color:var(--muted);font-size:15px;line-height:1.7;margin:14px 0 28px;max-width:480px;">Ubuntu Watchers receive nearby alerts on WhatsApp the moment a case is verified. Free to join, no equipment needed — just your eyes and your phone.</p>
+        <div class="why-grid">
+          <div class="why-card"><div class="num">312</div><div class="lbl">Active watchers</div></div>
+          <div class="why-card"><div class="num">9</div><div class="lbl">Found safe this month</div></div>
+          <div class="why-card"><div class="num">2 min</div><div class="lbl">Avg. alert delivery</div></div>
+          <div class="why-card"><div class="num">Free</div><div class="lbl">No cost to join</div></div>
+        </div>
+        <p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:12px;font-family:'Montserrat',sans-serif;">Who can be a watcher</p>
+        <div class="roles-list">
+          <div class="role-row"><span class="icon">🚖</span>Taxi &amp; ride-share drivers</div>
+          <div class="role-row"><span class="icon">🏪</span>Shop owners &amp; vendors</div>
+          <div class="role-row"><span class="icon">🏫</span>Teachers &amp; school staff</div>
+          <div class="role-row"><span class="icon">🛡️</span>Security guards</div>
+          <div class="role-row"><span class="icon">🚌</span>Bus &amp; kombi operators</div>
+          <div class="role-row"><span class="icon">⛪</span>Church &amp; community leaders</div>
+          <div class="role-row"><span class="icon">🏘️</span>Any community member</div>
         </div>
       </div>
-
+      <div>
+        <div class="form-card">
+          <div class="fc-head">Register as a Watcher</div>
+          <div class="fc-body">
+            <form method="POST">
+              <div class="field"><label>Full Name *</label><input type="text" name="name" required placeholder="Your full name"></div>
+              <div class="field"><label>WhatsApp Number *</label><input type="text" name="phone" required placeholder="+263 712 345 678"></div>
+              <div class="field">
+                <label>Your Role</label>
+                <select name="role">
+                  <option>Taxi / ride-share driver</option>
+                  <option>Bus / kombi operator</option>
+                  <option>Shop owner</option>
+                  <option>Security guard</option>
+                  <option>Teacher</option>
+                  <option>Church leader</option>
+                  <option>Community member</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="field" style="margin-bottom:24px;"><label>Your Area *</label><input type="text" name="area" required placeholder="e.g. Mbare, Harare"></div>
+              <button type="submit" class="submit-btn">Join the Network</button>
+            </form>
+            <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:10px;line-height:1.5;">Alerts will be sent to your WhatsApp. You can unsubscribe at any time.</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

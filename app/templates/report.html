@@ -1,205 +1,150 @@
 {% extends 'base.html' %}
-{% block title %}Report a missing person — Ubuntu Alert{% endblock %}
-
+{% block title %}Report a Missing Person — Ubuntu Alert{% endblock %}
 {% block head %}
 <style>
-.form-page { padding: 64px 0; }
-.form-layout { display: grid; grid-template-columns: 1fr 360px; gap: 48px; align-items: start; }
-.form-header { margin-bottom: 36px; }
-.form-eyebrow { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--rust); font-weight: 600; margin-bottom: 10px; }
-.form-title { font-size: 36px; font-weight: 800; letter-spacing: -.01em; margin-bottom: 10px; }
-.form-sub { font-size: 14px; color: var(--muted); line-height: 1.6; }
-
-.cat-tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+.form-page { padding: 56px 0; }
+.page-header { background: var(--zim-green); color: #fff; padding: 40px 0; margin-bottom: 0; }
+.page-header .page { display: flex; justify-content: space-between; align-items: center; }
+.page-header h1 { font-size: 34px; font-weight: 900; color: #fff; margin-bottom: 6px; }
+.page-header p { color: rgba(255,255,255,0.75); font-size: 15px; }
+.breadcrumb { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 8px; }
+.breadcrumb a { color: var(--zim-yellow); text-decoration: none; }
+.form-layout { display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: start; padding-top: 40px; }
+.form-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 32px; }
+.form-card h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid var(--zim-green); color: var(--zim-green); text-transform: uppercase; letter-spacing: .06em; }
+.cat-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
 .cat-tab { flex: 1; min-width: 110px; }
 .cat-tab input { display: none; }
 .cat-tab label {
-  display: block; text-align: center;
-  padding: 10px 8px; border-radius: 8px;
-  border: 1px solid var(--line); color: var(--muted);
-  font-size: 12px; font-weight: 600; cursor: pointer;
-  transition: all .15s; background: var(--card);
+  display: block; text-align: center; padding: 10px 8px;
+  border-radius: 4px; border: 1px solid var(--border);
+  color: var(--muted); font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: all .15s; background: var(--white);
+  font-family: 'Montserrat', sans-serif; text-transform: uppercase; letter-spacing: .04em;
 }
-.cat-tab input:checked + label { border-color: var(--rust); color: var(--off-white); background: rgba(201,79,44,0.12); }
-
-.field-group { margin-bottom: 18px; }
-.field-group label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 7px; letter-spacing: .04em; text-transform: uppercase; }
-.field-group input,
-.field-group select,
-.field-group textarea {
-  width: 100%; padding: 12px 14px;
-  background: var(--card); border: 1px solid var(--line);
-  border-radius: 8px; color: var(--off-white);
-  font-size: 14px; font-family: 'Inter', sans-serif;
-  transition: border-color .15s;
+.cat-tab input:checked + label { border-color: var(--zim-red); color: var(--zim-red); background: #FEF0F0; }
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .06em; font-family: 'Montserrat', sans-serif; }
+.field input, .field select, .field textarea {
+  width: 100%; padding: 11px 13px;
+  border: 1px solid var(--border); border-radius: 4px;
+  color: var(--text); font-size: 14px; font-family: 'Open Sans', sans-serif;
+  background: var(--white); transition: border-color .15s;
 }
-.field-group input:focus,
-.field-group select:focus,
-.field-group textarea:focus {
-  outline: none; border-color: var(--rust);
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--zim-green); }
+.field input::placeholder { color: #bbb; }
+.two-up { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.upload-box {
+  border: 2px dashed var(--border); border-radius: 4px; padding: 24px;
+  text-align: center; color: var(--muted); font-size: 13px;
+  cursor: pointer; transition: border-color .15s; margin-bottom: 20px;
 }
-.field-group input::placeholder,
-.field-group textarea::placeholder { color: var(--muted); }
-.field-group select option { background: #1a1a1a; }
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
-.upload-zone {
-  border: 1px dashed rgba(242,239,232,0.2);
-  border-radius: 8px; padding: 28px;
-  text-align: center; color: var(--muted);
-  font-size: 13px; cursor: pointer;
-  transition: border-color .15s; margin-bottom: 24px;
-}
-.upload-zone:hover { border-color: var(--rust); }
-.upload-zone .icon { font-size: 28px; margin-bottom: 8px; }
-
+.upload-box:hover { border-color: var(--zim-green); }
+.upload-box .icon { font-size: 28px; margin-bottom: 6px; }
 .submit-btn {
-  width: 100%; padding: 14px; font-size: 15px;
-  font-weight: 700; border-radius: 8px; border: none;
-  background: var(--rust); color: #fff; cursor: pointer;
-  transition: background .15s; font-family: 'Syne', sans-serif;
+  width: 100%; padding: 14px; font-size: 15px; font-weight: 800;
+  border-radius: 4px; border: none; background: var(--zim-red);
+  color: #fff; cursor: pointer; transition: background .15s;
+  font-family: 'Montserrat', sans-serif; text-transform: uppercase; letter-spacing: .06em;
 }
-.submit-btn:hover { background: #b44426; }
-.form-note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 10px; line-height: 1.5; }
+.submit-btn:hover { background: #a50d25; }
+.form-note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 8px; }
 
 /* SIDEBAR */
-.sidebar-card {
-  background: var(--card); border: 1px solid var(--line);
-  border-radius: 12px; padding: 24px; margin-bottom: 16px;
-}
-.sidebar-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 14px; }
-.sidebar-step { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
-.sidebar-step:last-child { margin-bottom: 0; }
-.step-dot {
-  width: 22px; height: 22px; border-radius: 50%;
-  background: rgba(201,79,44,0.15); border: 1px solid var(--rust);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: 700; color: var(--rust); flex-shrink: 0;
-}
-.step-text { font-size: 13px; color: var(--muted); line-height: 1.5; }
-.hotline {
-  background: rgba(201,79,44,0.08); border: 1px solid rgba(201,79,44,0.2);
-  border-radius: 8px; padding: 16px; text-align: center;
-}
-.hotline .num { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--rust); }
-.hotline .lbl { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.sidebar-box { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 16px; }
+.sidebar-box .sb-head { background: var(--zim-black); color: #fff; padding: 12px 18px; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.sidebar-box .sb-head.yellow { background: var(--zim-yellow); color: var(--zim-black); }
+.sidebar-box .sb-head.green { background: var(--zim-green); }
+.sidebar-box .sb-body { padding: 18px; }
+.step-item { display: flex; gap: 12px; margin-bottom: 14px; }
+.step-item:last-child { margin-bottom: 0; }
+.step-num { width: 24px; height: 24px; border-radius: 50%; background: var(--zim-green); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; font-family: 'Montserrat', sans-serif; }
+.step-item p { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 0; }
+.hotline-num { font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 900; color: var(--zim-red); text-align: center; padding: 16px; }
+.hotline-lbl { font-size: 12px; color: var(--muted); text-align: center; margin-top: -8px; padding-bottom: 16px; }
 
 @media (max-width: 860px) {
   .form-layout { grid-template-columns: 1fr; }
-  .two-col { grid-template-columns: 1fr; }
+  .two-up { grid-template-columns: 1fr; }
+  .page-header .page { flex-direction: column; align-items: flex-start; gap: 8px; }
 }
 </style>
 {% endblock %}
-
 {% block content %}
+<div class="page-header">
+  <div class="page">
+    <div>
+      <p class="breadcrumb"><a href="/">Home</a> / Report</p>
+      <h1>Report a Missing Person</h1>
+      <p>All reports are reviewed by a trained Ubuntu Alert verifier before any alert is sent.</p>
+    </div>
+    <div style="color:rgba(255,255,255,0.6);font-size:13px;text-align:right;">
+      <div style="font-size:28px;font-weight:900;font-family:'Montserrat',sans-serif;color:var(--zim-yellow);">0800-UBUNTU</div>
+      <div>Emergency hotline — 24/7</div>
+    </div>
+  </div>
+</div>
+<div class="stripe-divider"></div>
 <div class="form-page">
   <div class="page">
     <div class="form-layout">
-
-      <!-- FORM -->
       <div>
-        <div class="form-header">
-          <p class="form-eyebrow">Report</p>
-          <h1 class="form-title">Report a missing person.</h1>
-          <p class="form-sub">All reports are reviewed by a trained Ubuntu Alert verifier before any alert is sent to the public.</p>
-        </div>
-
-        <form method="POST">
-          <p style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;">Alert category</p>
-          <div class="cat-tabs">
-            <div class="cat-tab"><input type="radio" name="category" id="cat-child" value="child" checked><label for="cat-child">🟠 Child</label></div>
-            <div class="cat-tab"><input type="radio" name="category" id="cat-vulnerable" value="vulnerable"><label for="cat-vulnerable">🔵 Vulnerable</label></div>
-            <div class="cat-tab"><input type="radio" name="category" id="cat-missing" value="missing"><label for="cat-missing">🟢 Missing adult</label></div>
-            <div class="cat-tab"><input type="radio" name="category" id="cat-critical" value="critical"><label for="cat-critical">🔴 Critical</label></div>
-          </div>
-
-          <div class="two-col">
-            <div class="field-group">
-              <label>Full name *</label>
-              <input type="text" name="name" required placeholder="e.g. Tendai Moyo">
+        <div class="form-card">
+          <h2>Missing person details</h2>
+          <form method="POST">
+            <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;font-family:'Montserrat',sans-serif;">Alert Category *</p>
+            <div class="cat-tabs">
+              <div class="cat-tab"><input type="radio" name="category" id="c1" value="child" checked><label for="c1">🟠 Child</label></div>
+              <div class="cat-tab"><input type="radio" name="category" id="c2" value="vulnerable"><label for="c2">🔵 Vulnerable</label></div>
+              <div class="cat-tab"><input type="radio" name="category" id="c3" value="missing"><label for="c3">🟢 Missing Adult</label></div>
+              <div class="cat-tab"><input type="radio" name="category" id="c4" value="critical"><label for="c4">🔴 Critical</label></div>
             </div>
-            <div class="field-group">
-              <label>Age *</label>
-              <input type="text" name="age" required placeholder="e.g. 7">
+            <div class="two-up">
+              <div class="field"><label>Full Name *</label><input type="text" name="name" required placeholder="e.g. Tendai Moyo"></div>
+              <div class="field"><label>Age *</label><input type="text" name="age" required placeholder="e.g. 7"></div>
             </div>
-          </div>
-
-          <div class="field-group">
-            <label>Last known location *</label>
-            <input type="text" name="last_location" required placeholder="e.g. Mbare market, Harare">
-          </div>
-
-          <div class="field-group">
-            <label>Clothing description</label>
-            <input type="text" name="clothing" placeholder="e.g. Blue school uniform, white sneakers">
-          </div>
-
-          <div class="two-col">
-            <div class="field-group">
-              <label>Medical conditions</label>
-              <input type="text" name="medical" placeholder="Optional">
+            <div class="field"><label>Last Known Location *</label><input type="text" name="last_location" required placeholder="e.g. Mbare market, Harare"></div>
+            <div class="field"><label>Clothing Description</label><input type="text" name="clothing" placeholder="e.g. Blue school uniform, white sneakers"></div>
+            <div class="two-up">
+              <div class="field"><label>Medical Conditions</label><input type="text" name="medical" placeholder="Optional"></div>
+              <div class="field"><label>Police Case Number</label><input type="text" name="police_case" placeholder="If available"></div>
             </div>
-            <div class="field-group">
-              <label>Police case number</label>
-              <input type="text" name="police_case" placeholder="If available">
+            <div class="field"><label>Vehicle Information</label><input type="text" name="vehicle" placeholder="e.g. White Honda Fit, reg AEX 4521"></div>
+            <div class="upload-box"><div class="icon">📷</div>Upload a recent photo<br><span style="font-size:11px;">(photo upload coming soon)</span></div>
+            <div style="border-top:1px solid var(--border);padding-top:18px;margin-bottom:18px;">
+              <p style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;font-family:'Montserrat',sans-serif;">Your details</p>
+              <div class="two-up">
+                <div class="field" style="margin-bottom:0;"><label>Your Name *</label><input type="text" name="reporter_name" required placeholder="Your full name"></div>
+                <div class="field" style="margin-bottom:0;"><label>Your Phone *</label><input type="text" name="reporter_phone" required placeholder="+263 712 345 678"></div>
+              </div>
             </div>
-          </div>
-
-          <div class="field-group">
-            <label>Vehicle information</label>
-            <input type="text" name="vehicle" placeholder="e.g. White Honda Fit, reg AEX 4521">
-          </div>
-
-          <div class="upload-zone">
-            <div class="icon">📷</div>
-            Upload a recent photo<br>
-            <span style="font-size:11px;">(photo upload coming soon)</span>
-          </div>
-
-          <div class="two-col" style="margin-bottom:18px;">
-            <div class="field-group" style="margin-bottom:0;">
-              <label>Your name *</label>
-              <input type="text" name="reporter_name" required placeholder="Your full name">
-            </div>
-            <div class="field-group" style="margin-bottom:0;">
-              <label>Your phone number *</label>
-              <input type="text" name="reporter_phone" required placeholder="+263 712 345 678">
-            </div>
-          </div>
-
-          <button type="submit" class="submit-btn">Submit for verification</button>
-          <p class="form-note">By submitting, you confirm this information may be shared publicly to help locate this person.</p>
-        </form>
-      </div>
-
-      <!-- SIDEBAR -->
-      <div>
-        <div class="sidebar-card">
-          <h4>What happens next</h4>
-          <div class="sidebar-step">
-            <div class="step-dot">1</div>
-            <div class="step-text">Your report is received by the Ubuntu Alert team.</div>
-          </div>
-          <div class="sidebar-step">
-            <div class="step-dot">2</div>
-            <div class="step-text">A trained verifier contacts you to confirm details.</div>
-          </div>
-          <div class="sidebar-step">
-            <div class="step-dot">3</div>
-            <div class="step-text">Once verified, the alert is broadcast to all watchers and partners.</div>
-          </div>
-          <div class="sidebar-step">
-            <div class="step-dot">4</div>
-            <div class="step-text">You receive updates as sightings come in.</div>
-          </div>
-        </div>
-
-        <div class="hotline">
-          <div class="num">0800-UBUNTU</div>
-          <div class="lbl">Emergency hotline — 24/7</div>
+            <button type="submit" class="submit-btn">Submit for Verification</button>
+            <p class="form-note">By submitting you confirm this information may be shared publicly to help locate this person.</p>
+          </form>
         </div>
       </div>
-
+      <div>
+        <div class="sidebar-box">
+          <div class="sb-head green">What happens next</div>
+          <div class="sb-body">
+            <div class="step-item"><div class="step-num">1</div><p>Your report is received by the Ubuntu Alert team.</p></div>
+            <div class="step-item"><div class="step-num">2</div><p>A trained verifier contacts you to confirm details.</p></div>
+            <div class="step-item"><div class="step-num">3</div><p>Once verified the alert broadcasts to all watchers and partners.</p></div>
+            <div class="step-item"><div class="step-num">4</div><p>You receive updates as sightings come in.</p></div>
+          </div>
+        </div>
+        <div class="sidebar-box">
+          <div class="sb-head yellow">Emergency Hotline</div>
+          <div class="hotline-num">0800-UBUNTU</div>
+          <div class="hotline-lbl">Available 24 hours, 7 days a week</div>
+        </div>
+        <div class="sidebar-box">
+          <div class="sb-head">Need help completing this form?</div>
+          <div class="sb-body">
+            <p style="font-size:13px;color:var(--muted);line-height:1.6;">You can also report via WhatsApp by messaging our channel or calling our hotline. Police stations and hospitals can report directly on behalf of families.</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -1,187 +1,127 @@
 {% extends 'base.html' %}
-{% block title %}Admin — Ubuntu Alert{% endblock %}
-
+{% block title %}Admin Dashboard — Ubuntu Alert{% endblock %}
 {% block head %}
 <style>
-.admin-page { padding: 56px 0; }
-.admin-header { margin-bottom: 48px; }
-.admin-header h1 { font-size: 36px; font-weight: 800; letter-spacing: -.01em; margin-bottom: 6px; }
-.admin-header p { font-size: 14px; color: var(--muted); }
-
-.admin-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 48px; }
-.admin-stat { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; }
-.admin-stat .num { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
-.admin-stat .lbl { font-size: 12px; color: var(--muted); }
-.num-orange { color: var(--ochre); }
-.num-red { color: var(--rust); }
-.num-green { color: var(--missing); }
-
-.section-label {
-  font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
-  color: var(--muted); font-weight: 600; margin-bottom: 14px;
-  display: flex; align-items: center; gap: 8px;
+.admin-topbar { background: var(--zim-black); color: #fff; padding: 32px 0; border-bottom: 4px solid var(--zim-yellow); }
+.admin-topbar h1 { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+.admin-topbar p { color: rgba(255,255,255,0.55); font-size: 14px; }
+.admin-body { padding: 40px 0; }
+.kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 40px; }
+.kpi { background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 20px 24px; border-top: 4px solid var(--border); }
+.kpi.orange { border-top-color: var(--zim-yellow); }
+.kpi.red { border-top-color: var(--zim-red); }
+.kpi.green { border-top-color: var(--zim-green); }
+.kpi.black { border-top-color: var(--zim-black); }
+.kpi .num { font-family: 'Montserrat', sans-serif; font-size: 36px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+.kpi.orange .num { color: #D4922A; }
+.kpi.red .num { color: var(--zim-red); }
+.kpi.green .num { color: var(--zim-green); }
+.kpi .lbl { font-size: 13px; color: var(--muted); }
+.section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 18px; background: var(--zim-black); color: #fff; border-radius: 6px 6px 0 0;
+  font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .1em;
 }
-.count-pill {
-  background: var(--slate); color: var(--off-white);
-  padding: 2px 8px; border-radius: 20px; font-size: 11px;
-}
-.case-list { display: flex; flex-direction: column; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-bottom: 40px; }
-.case-row {
-  background: var(--card); padding: 18px 22px;
-  display: flex; align-items: center; gap: 16px;
-  transition: background .15s;
-}
-.case-row:hover { background: #1d1d1d; }
-.case-info { flex: 1; min-width: 0; }
-.case-info h4 { font-size: 15px; font-weight: 600; margin: 4px 0 2px; }
-.case-info p { font-size: 13px; color: var(--muted); }
-.case-actions { display: flex; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
+.section-head .pill { background: var(--zim-yellow); color: var(--zim-black); padding: 2px 10px; border-radius: 20px; font-size: 11px; }
+.case-table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; overflow: hidden; margin-bottom: 32px; }
+.case-table td { padding: 15px 18px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; }
+.case-table tr:last-child td { border-bottom: none; }
+.case-table tbody tr:hover td { background: var(--off-white); }
+.case-name { font-weight: 600; }
+.case-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
 .action-btn {
-  padding: 7px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;
-  text-decoration: none; border: 1px solid var(--line); color: var(--off-white);
-  background: var(--card); transition: all .15s; white-space: nowrap;
+  display: inline-block; padding: 6px 12px; border-radius: 4px; font-size: 12px;
+  font-weight: 700; text-decoration: none; border: 1px solid var(--border);
+  color: var(--text); background: var(--white); transition: all .15s;
+  font-family: 'Montserrat', sans-serif; text-transform: uppercase; letter-spacing: .04em;
+  margin-right: 4px; white-space: nowrap;
 }
-.action-btn:hover { background: var(--slate); }
-.action-btn.activate { border-color: var(--rust); color: var(--rust); }
-.action-btn.activate:hover { background: var(--rust); color: #fff; }
-.action-btn.found { border-color: var(--missing); color: var(--missing); }
-.action-btn.found:hover { background: var(--missing); color: #fff; }
-
-.empty-state {
-  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
-  padding: 32px; text-align: center; color: var(--muted);
-  font-size: 14px; margin-bottom: 40px;
-}
-
-/* WATCHERS TABLE */
-.table-wrap { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-thead { background: #1d1d1d; }
-th { padding: 12px 18px; text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
-td { padding: 14px 18px; border-top: 1px solid var(--line); }
-tbody tr:hover td { background: #1d1d1d; }
-
+.action-btn.activate { border-color: var(--zim-red); color: var(--zim-red); }
+.action-btn.activate:hover { background: var(--zim-red); color: #fff; }
+.action-btn.found { border-color: var(--zim-green); color: var(--zim-green); }
+.action-btn.found:hover { background: var(--zim-green); color: #fff; }
+.empty-row td { text-align: center; padding: 32px; color: var(--muted); font-size: 14px; }
+.watcher-table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; overflow: hidden; }
+.watcher-table th { padding: 11px 18px; background: var(--light-grey); text-align: left; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; font-family: 'Montserrat', sans-serif; }
+.watcher-table td { padding: 13px 18px; border-top: 1px solid var(--border); font-size: 14px; }
+.watcher-table tbody tr:hover td { background: var(--off-white); }
 @media (max-width: 720px) {
-  .admin-stats { grid-template-columns: repeat(2,1fr); }
-  .case-actions { flex-direction: column; }
+  .kpi-row { grid-template-columns: repeat(2,1fr); }
 }
 </style>
 {% endblock %}
-
 {% block content %}
-<div class="admin-page">
+<div class="admin-topbar">
   <div class="page">
-
-    <div class="admin-header">
-      <h1>Admin dashboard</h1>
-      <p>Review pending reports, activate alerts, and track case resolutions.</p>
+    <h1>Admin Dashboard</h1>
+    <p>Review pending reports, activate alerts, and track case resolutions.</p>
+  </div>
+</div>
+<div class="stripe-divider"></div>
+<div class="admin-body">
+  <div class="page">
+    <div class="kpi-row">
+      <div class="kpi orange"><div class="num">{{ pending|length }}</div><div class="lbl">Awaiting verification</div></div>
+      <div class="kpi red"><div class="num">{{ active|length }}</div><div class="lbl">Active alerts</div></div>
+      <div class="kpi green"><div class="num">{{ resolved|length }}</div><div class="lbl">Resolved cases</div></div>
+      <div class="kpi black"><div class="num">{{ watchers|length }}</div><div class="lbl">Registered watchers</div></div>
     </div>
 
-    <div class="admin-stats">
-      <div class="admin-stat">
-        <div class="num num-orange">{{ pending|length }}</div>
-        <div class="lbl">Awaiting verification</div>
-      </div>
-      <div class="admin-stat">
-        <div class="num num-red">{{ active|length }}</div>
-        <div class="lbl">Active alerts</div>
-      </div>
-      <div class="admin-stat">
-        <div class="num num-green">{{ resolved|length }}</div>
-        <div class="lbl">Resolved cases</div>
-      </div>
-      <div class="admin-stat">
-        <div class="num">{{ watchers|length }}</div>
-        <div class="lbl">Registered watchers</div>
-      </div>
-    </div>
-
-    <!-- PENDING -->
-    <div class="section-label">
-      Pending verification
-      <span class="count-pill">{{ pending|length }}</span>
-    </div>
-
-    {% if pending %}
-    <div class="case-list">
+    <div class="section-head"><span>⏳ Pending Verification</span><span class="pill">{{ pending|length }}</span></div>
+    <table class="case-table">
+      {% if pending %}
       {% for case in pending %}
-      <div class="case-row">
-        <div class="case-info">
-          <span class="badge badge-{{ case.category }}">{{ case.category|title }}</span>
-          <h4>{{ case.name }}, age {{ case.age }}</h4>
-          <p>{{ case.last_location }} — reported by {{ case.reporter_name }} ({{ case.reporter_phone }})</p>
-        </div>
-        <div class="case-actions">
-          <a href="/admin/activate/{{ case.id }}" class="action-btn activate">Activate alert</a>
-        </div>
-      </div>
+      <tr>
+        <td style="width:100px;"><span class="badge badge-{{ case.category }}">{{ case.category|title }}</span></td>
+        <td><div class="case-name">{{ case.name }}, age {{ case.age }}</div><div class="case-sub">{{ case.last_location }}</div></td>
+        <td style="color:var(--muted);font-size:13px;">{{ case.reporter_name }} — {{ case.reporter_phone }}</td>
+        <td style="text-align:right;"><a href="/admin/activate/{{ case.id }}" class="action-btn activate">Activate Alert</a></td>
+      </tr>
       {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state">No reports awaiting verification.</div>
-    {% endif %}
+      {% else %}
+      <tr class="empty-row"><td colspan="4">No reports awaiting verification.</td></tr>
+      {% endif %}
+    </table>
 
-    <!-- ACTIVE -->
-    <div class="section-label">
-      Active alerts
-      <span class="count-pill">{{ active|length }}</span>
-    </div>
-
-    {% if active %}
-    <div class="case-list">
+    <div class="section-head"><span>🔴 Active Alerts</span><span class="pill">{{ active|length }}</span></div>
+    <table class="case-table">
+      {% if active %}
       {% for case in active %}
-      <div class="case-row">
-        <div class="case-info">
-          <span class="badge badge-{{ case.category }}">{{ case.category|title }}</span>
-          <h4>{{ case.name }}, age {{ case.age }}</h4>
-          <p>{{ case.last_location }} — since {{ case.created_at.strftime('%d %b %Y') }}</p>
-        </div>
-        <div class="case-actions">
-          <a href="/admin/resolve/{{ case.id }}/found" class="action-btn found">✅ Found safe</a>
+      <tr>
+        <td style="width:100px;"><span class="badge badge-{{ case.category }}">{{ case.category|title }}</span></td>
+        <td><div class="case-name">{{ case.name }}, age {{ case.age }}</div><div class="case-sub">{{ case.last_location }} — since {{ case.created_at.strftime('%d %b %Y') }}</div></td>
+        <td style="text-align:right;">
+          <a href="/admin/resolve/{{ case.id }}/found" class="action-btn found">✅ Found Safe</a>
           <a href="/admin/resolve/{{ case.id }}/investigation" class="action-btn">🚨 Investigation</a>
           <a href="/admin/resolve/{{ case.id }}/deceased" class="action-btn">❌ Deceased</a>
-        </div>
-      </div>
+        </td>
+      </tr>
       {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state">No active alerts.</div>
-    {% endif %}
+      {% else %}
+      <tr class="empty-row"><td colspan="3">No active alerts.</td></tr>
+      {% endif %}
+    </table>
 
-    <!-- WATCHERS -->
-    <div class="section-label">
-      Registered watchers
-      <span class="count-pill">{{ watchers|length }}</span>
-    </div>
-
-    {% if watchers %}
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Role</th>
-            <th>Area</th>
-            <th>Joined</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for w in watchers %}
-          <tr>
-            <td>{{ w.name }}</td>
-            <td>{{ w.phone }}</td>
-            <td>{{ w.role }}</td>
-            <td>{{ w.area }}</td>
-            <td style="color:var(--muted);">{{ w.registered_at.strftime('%d %b %Y') }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-    {% else %}
-    <div class="empty-state">No watchers registered yet.</div>
-    {% endif %}
+    <div class="section-head"><span>👥 Registered Watchers</span><span class="pill">{{ watchers|length }}</span></div>
+    <table class="watcher-table">
+      <thead><tr><th>Name</th><th>Phone</th><th>Role</th><th>Area</th><th>Joined</th></tr></thead>
+      <tbody>
+        {% if watchers %}
+        {% for w in watchers %}
+        <tr>
+          <td>{{ w.name }}</td>
+          <td>{{ w.phone }}</td>
+          <td>{{ w.role }}</td>
+          <td>{{ w.area }}</td>
+          <td style="color:var(--muted);font-size:13px;">{{ w.registered_at.strftime('%d %b %Y') }}</td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr><td colspan="5" style="text-align:center;padding:28px;color:var(--muted);">No watchers registered yet.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
 
   </div>
 </div>

@@ -5,171 +5,292 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{% block title %}Ubuntu Alert{% endblock %}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --night: #0E0E0E;
-  --off-white: #F2EFE8;
-  --rust: #C94F2C;
-  --ochre: #D4922A;
-  --forest: #2A4A35;
-  --slate: #3A3A3A;
-  --muted: #8A8680;
-  --line: rgba(242,239,232,0.12);
-  --card: #161616;
-  --child: #D4922A;
-  --vulnerable: #4A90C4;
-  --missing: #3DAB6E;
-  --critical: #C94F2C;
+  /* Zimbabwe flag palette */
+  --zim-green:   #006400;
+  --zim-yellow:  #FFD200;
+  --zim-red:     #C8102E;
+  --zim-black:   #1A1A1A;
+  --zim-gold:    #D4A017;
+
+  /* UI */
+  --white:       #FFFFFF;
+  --off-white:   #F7F7F5;
+  --light-grey:  #F0EFEC;
+  --border:      #E2E0DB;
+  --text:        #1A1A1A;
+  --muted:       #666660;
+  --card:        #FFFFFF;
+
+  /* Alert categories */
+  --child:       #FFD200;
+  --vulnerable:  #2E6DB4;
+  --missing:     #006400;
+  --critical:    #C8102E;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
-  font-family: 'Inter', sans-serif;
-  background: var(--night);
-  color: var(--off-white);
-  line-height: 1.6;
-  min-height: 100vh;
+  font-family: 'Open Sans', sans-serif;
+  background: var(--white);
+  color: var(--text);
+  line-height: 1.65;
 }
-h1,h2,h3,h4 { font-family: 'Syne', sans-serif; }
+h1,h2,h3,h4,h5 {
+  font-family: 'Montserrat', sans-serif;
+  line-height: 1.2;
+}
 
-/* NAV */
+/* ── TOP BAR ── */
+.topbar {
+  background: var(--zim-black);
+  color: rgba(255,255,255,0.7);
+  font-size: 12px;
+  padding: 7px 0;
+  border-bottom: 3px solid var(--zim-yellow);
+}
+.topbar-inner {
+  max-width: 1120px; margin: 0 auto; padding: 0 28px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.topbar a { color: var(--zim-yellow); text-decoration: none; margin-left: 16px; }
+.topbar a:hover { text-decoration: underline; }
+
+/* ── HEADER ── */
 header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
   position: sticky; top: 0; z-index: 100;
-  border-bottom: 1px solid var(--line);
-  background: rgba(14,14,14,0.92);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
-.nav-inner {
-  max-width: 1080px; margin: 0 auto;
-  padding: 0 28px;
+.header-inner {
+  max-width: 1120px; margin: 0 auto; padding: 0 28px;
   display: flex; align-items: center; justify-content: space-between;
-  height: 64px;
+  height: 72px; gap: 24px;
 }
-.brand {
-  display: flex; align-items: center; gap: 12px;
-  text-decoration: none; color: var(--off-white);
-}
-.brand-mark {
-  width: 36px; height: 36px; border-radius: 50%;
-  background: var(--rust);
+.brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+.brand-logo {
+  width: 46px; height: 46px; border-radius: 50%;
+  background: var(--zim-green);
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px;
-  letter-spacing: .04em; color: #fff;
-  flex-shrink: 0;
+  flex-shrink: 0; position: relative; overflow: hidden;
 }
-.brand-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; }
-.brand-sub { font-size: 10px; color: var(--muted); font-weight: 400; display: block; margin-top: -2px; }
-nav.links { display: flex; gap: 28px; }
-nav.links a {
-  font-size: 13px; color: var(--muted); text-decoration: none;
-  transition: color .15s;
+.brand-logo::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, transparent 45%, var(--zim-yellow) 45%, var(--zim-yellow) 55%, transparent 55%);
 }
-nav.links a:hover { color: var(--off-white); }
+.brand-logo span {
+  font-family: 'Montserrat', sans-serif; font-weight: 900;
+  font-size: 14px; color: #fff; z-index: 1; position: relative;
+}
+.brand-name {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800; font-size: 20px; color: var(--zim-green);
+  letter-spacing: -.01em;
+}
+.brand-sub { font-size: 11px; color: var(--muted); display: block; margin-top: -2px; }
+
+nav.main-nav { display: flex; gap: 4px; }
+nav.main-nav a {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px; font-weight: 600;
+  color: var(--text); text-decoration: none;
+  padding: 8px 14px; border-radius: 4px;
+  transition: all .15s;
+  text-transform: uppercase; letter-spacing: .04em;
+}
+nav.main-nav a:hover { background: var(--light-grey); color: var(--zim-green); }
+
+/* BUTTONS */
 .btn {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 9px 18px; border-radius: 6px; font-size: 13px; font-weight: 600;
-  text-decoration: none; border: 1px solid transparent;
-  cursor: pointer; transition: all .15s; font-family: 'Inter', sans-serif;
-  white-space: nowrap;
+  padding: 11px 22px; border-radius: 4px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .06em; text-decoration: none;
+  border: 2px solid transparent; cursor: pointer;
+  transition: all .15s; white-space: nowrap;
 }
-.btn-rust { background: var(--rust); color: #fff; border-color: var(--rust); }
-.btn-rust:hover { background: #b44426; }
-.btn-outline { border-color: var(--line); color: var(--off-white); background: transparent; }
-.btn-outline:hover { border-color: var(--off-white); }
-.btn-forest { background: var(--forest); color: var(--off-white); border-color: var(--forest); }
-.btn-forest:hover { background: #1e3626; }
+.btn-red { background: var(--zim-red); color: #fff; border-color: var(--zim-red); }
+.btn-red:hover { background: #a50d25; border-color: #a50d25; }
+.btn-green { background: var(--zim-green); color: #fff; border-color: var(--zim-green); }
+.btn-green:hover { background: #004d00; }
+.btn-outline-green { background: transparent; color: var(--zim-green); border-color: var(--zim-green); }
+.btn-outline-green:hover { background: var(--zim-green); color: #fff; }
+.btn-yellow { background: var(--zim-yellow); color: var(--zim-black); border-color: var(--zim-yellow); }
+.btn-yellow:hover { background: #e5bc00; }
 
 /* LAYOUT */
-.page { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+.page { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
 
 /* BADGES */
 .badge {
   display: inline-block; font-size: 10px; font-weight: 700;
-  padding: 3px 8px; border-radius: 4px; letter-spacing: .06em;
-  text-transform: uppercase; color: #fff;
+  padding: 3px 9px; border-radius: 3px; letter-spacing: .08em;
+  text-transform: uppercase;
 }
-.badge-child { background: var(--child); }
-.badge-vulnerable { background: var(--vulnerable); }
-.badge-missing { background: var(--missing); }
-.badge-critical { background: var(--critical); }
-.badge-pending { background: var(--slate); }
-.badge-found { background: var(--missing); }
+.badge-child { background: var(--zim-yellow); color: var(--zim-black); }
+.badge-vulnerable { background: #2E6DB4; color: #fff; }
+.badge-missing { background: var(--zim-green); color: #fff; }
+.badge-critical { background: var(--zim-red); color: #fff; }
+.badge-pending { background: #999; color: #fff; }
+.badge-found { background: var(--zim-green); color: #fff; }
 
 /* FLASH */
-.flash-wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+.flash-wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
 .flash {
-  margin: 16px 0; padding: 14px 18px;
-  border-radius: 8px; font-size: 14px;
-  background: rgba(61,171,110,0.12); border: 1px solid rgba(61,171,110,0.3);
-  color: #3DAB6E;
+  margin: 16px 0; padding: 14px 18px; border-radius: 4px;
+  font-size: 14px; background: #f0faf0;
+  border-left: 4px solid var(--zim-green); color: var(--zim-green);
 }
+
+/* SECTION */
+.section { padding: 64px 0; }
+.section-alt { background: var(--off-white); }
+.section-eyebrow {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px; font-weight: 700; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--zim-red);
+  margin-bottom: 10px;
+}
+.section-title {
+  font-size: 30px; font-weight: 800; color: var(--zim-black);
+  letter-spacing: -.01em; margin-bottom: 10px;
+}
+.section-title span { color: var(--zim-green); }
+.section-sub { font-size: 15px; color: var(--muted); max-width: 580px; }
 
 /* DIVIDER */
-.rule { border: none; border-top: 1px solid var(--line); }
+.stripe-divider {
+  height: 6px;
+  background: linear-gradient(to right,
+    var(--zim-green) 0%, var(--zim-green) 20%,
+    var(--zim-yellow) 20%, var(--zim-yellow) 40%,
+    var(--zim-red) 40%, var(--zim-red) 60%,
+    var(--zim-black) 60%, var(--zim-black) 80%,
+    var(--zim-green) 80%, var(--zim-green) 100%
+  );
+}
 
 /* FOOTER */
-footer {
-  border-top: 1px solid var(--line);
-  padding: 48px 0; margin-top: 80px;
+footer { background: var(--zim-black); color: rgba(255,255,255,0.75); }
+.footer-stripe {
+  height: 5px;
+  background: linear-gradient(to right,
+    var(--zim-green) 25%, var(--zim-yellow) 25%,
+    var(--zim-yellow) 50%, var(--zim-red) 50%,
+    var(--zim-red) 75%, var(--zim-green) 75%
+  );
 }
 .footer-inner {
-  max-width: 1080px; margin: 0 auto; padding: 0 28px;
-  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  max-width: 1120px; margin: 0 auto; padding: 48px 28px 32px;
+  display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px;
 }
-.footer-tagline {
-  font-family: 'Syne', sans-serif; font-weight: 600; font-size: 15px;
-  color: var(--muted);
+.footer-brand { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 18px; color: var(--white); margin-bottom: 10px; }
+.footer-tagline { font-size: 14px; color: rgba(255,255,255,0.5); font-style: italic; }
+.footer-heading { font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--zim-yellow); margin-bottom: 14px; }
+.footer-links { display: flex; flex-direction: column; gap: 8px; }
+.footer-links a { font-size: 13px; color: rgba(255,255,255,0.6); text-decoration: none; transition: color .15s; }
+.footer-links a:hover { color: var(--white); }
+.footer-bottom {
+  max-width: 1120px; margin: 0 auto;
+  padding: 16px 28px; border-top: 1px solid rgba(255,255,255,0.08);
+  font-size: 12px; color: rgba(255,255,255,0.35);
+  display: flex; justify-content: space-between; align-items: center;
 }
-.footer-tagline em { color: var(--rust); font-style: normal; }
-.footer-copy { font-size: 12px; color: var(--muted); }
 
-@media (max-width: 720px) {
-  nav.links { display: none; }
-  .nav-inner { padding: 0 20px; }
+@media (max-width: 900px) {
+  nav.main-nav { display: none; }
+  .header-inner { padding: 0 20px; }
   .page { padding: 0 20px; }
+  .footer-inner { grid-template-columns: 1fr; gap: 28px; }
+  .topbar-inner { flex-direction: column; gap: 4px; text-align: center; }
 }
 </style>
 {% block head %}{% endblock %}
 </head>
 <body>
 
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <span>🇿🇼 Africa's community alert network for missing &amp; vulnerable persons</span>
+    <div>
+      <span>Emergency: <a href="tel:0800-UBUNTU">0800-UBUNTU</a></span>
+      <a href="/admin">Admin</a>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
 <header>
-  <div class="nav-inner">
+  <div class="header-inner">
     <a href="/" class="brand">
-      <div class="brand-mark">UA</div>
+      <div class="brand-logo"><span>UA</span></div>
       <div>
-        <span class="brand-text">Ubuntu Alert</span>
+        <span class="brand-name">Ubuntu Alert</span>
         <span class="brand-sub">A Heartwave Foundation Initiative</span>
       </div>
     </a>
-    <nav class="links">
-      <a href="/#alerts">Active alerts</a>
+    <nav class="main-nav">
+      <a href="/#alerts">Active Alerts</a>
+      <a href="/#how">How It Works</a>
+      <a href="/watch">Watchers</a>
       <a href="/report">Report</a>
-      <a href="/watch">Become a watcher</a>
-      <a href="/admin">Admin</a>
     </nav>
-    <a href="/report" class="btn btn-rust">Report missing person</a>
+    <a href="/report" class="btn btn-red">⚠ Report Missing Person</a>
   </div>
 </header>
 
 <div class="flash-wrap">
   {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      {% for message in messages %}
-        <div class="flash">{{ message }}</div>
-      {% endfor %}
-    {% endif %}
+    {% if messages %}{% for message in messages %}
+      <div class="flash">{{ message }}</div>
+    {% endfor %}{% endif %}
   {% endwith %}
 </div>
 
 {% block content %}{% endblock %}
 
+<!-- FOOTER -->
+<div class="stripe-divider"></div>
 <footer>
   <div class="footer-inner">
-    <div class="footer-tagline"><em>"I am because we are."</em></div>
-    <div class="footer-copy">Ubuntu Alert — A Heartwave Foundation Initiative</div>
+    <div>
+      <div class="footer-brand">Ubuntu Alert</div>
+      <p class="footer-tagline">"I am because we are."</p>
+      <p style="font-size:13px;color:rgba(255,255,255,0.45);margin-top:12px;line-height:1.6;">
+        Harnessing the power of community, technology, and law enforcement to rapidly share information about missing and vulnerable persons across Africa.
+      </p>
+    </div>
+    <div>
+      <div class="footer-heading">Quick Links</div>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/#alerts">Active Alerts</a>
+        <a href="/report">Report Missing</a>
+        <a href="/watch">Become a Watcher</a>
+        <a href="/admin">Admin</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-heading">Contact</div>
+      <div class="footer-links">
+        <a href="tel:0800-UBUNTU">0800-UBUNTU</a>
+        <a href="mailto:alert@heartwave.org">alert@heartwave.org</a>
+        <a href="#">WhatsApp Channel</a>
+        <a href="#">Facebook Page</a>
+      </div>
+    </div>
   </div>
+  <div class="footer-bottom">
+    <span>© 2026 Ubuntu Alert — A Heartwave Foundation Initiative</span>
+    <span>Built to bring loved ones home.</span>
+  </div>
+  <div class="footer-stripe"></div>
 </footer>
 
 </body>
